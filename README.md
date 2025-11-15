@@ -1,34 +1,35 @@
-# 📡 Fake Weather Broadcaster – ROS 2 Humble
+# Fake Weather Broadcaster – ROS 2 Humble
 
 This ROS 2 package publishes synthetic 24-hour weather data using a custom message type.
-The publisher runs at **1 Hz**, and each message represents **15 minutes** of virtual time.
-A full “virtual day” is **96 samples** (96 × 15 min = 24 hours), after which the cycle repeats.
+The publisher operates at **1 Hz**, and each message represents **15 minutes** of simulated time.
+A complete cycle consists of **96 samples** (96 × 15 minutes = 24 hours), after which the pattern repeats.
 
-Includes:
+The package includes:
 
-* `weather_interfaces` — custom message definition
-* `weather_publisher` — Python publisher node
+* `weather_interfaces` — custom `.msg` definition
+* `weather_publisher` — publisher that outputs all weather fields on a single topic (`/weather`)
+* `weather_split_publisher` — publisher that outputs the four weather variables on separate topics
 
-Works on all **standard ROS 2 Humble installations** (Ubuntu 22.04 recommended).
+This package is compatible with standard ROS 2 Humble installations (Ubuntu 22.04 recommended).
 
 ---
 
-# 🚀 Setup Instructions (Standard ROS 2 Humble)
+## Setup Instructions (ROS 2 Humble, Standard Installation)
 
-## 1. Create a workspace
+### 1. Create a workspace
 
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
 ```
 
-## 2. Clone this repository
+### 2. Clone this repository
 
 ```bash
 git clone <your-repo-url>
 ```
 
-Your workspace structure should now look like:
+Your workspace structure should resemble:
 
 ```
 ros2_ws/
@@ -36,9 +37,10 @@ ros2_ws/
     FAKE_DATA_BROADCASTER/
       weather_interfaces/
       weather_publisher/
+      weather_split_publisher/
 ```
 
-## 3. Build the workspace
+### 3. Build the workspace
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -49,9 +51,9 @@ source install/setup.bash
 
 ---
 
-# ▶️ Running the Publisher
+## Running the Combined Weather Publisher (`/weather`)
 
-### Terminal 1 – start the publisher
+### Terminal 1
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -61,7 +63,7 @@ source install/setup.bash
 ros2 run weather_publisher weather_publisher
 ```
 
-You will see logs like:
+Example log output:
 
 ```
 [t= 2.5 h] T=18.7 °C, H=68.3 %, Wind=1.2 m/s @ 93°
@@ -69,9 +71,9 @@ You will see logs like:
 
 ---
 
-# 🔍 Viewing Weather Data
+## Viewing Combined Weather Data
 
-### Terminal 2 – echo the topic
+### Terminal 2
 
 ```bash
 source /opt/ros/humble/setup.bash
@@ -82,7 +84,7 @@ ros2 topic list
 ros2 topic echo /weather
 ```
 
-Example output:
+Example message:
 
 ```text
 temperature_c: 21.4
@@ -94,17 +96,50 @@ wind_direction_deg: 182.0
 
 ---
 
-# 🌤️ How the Fake Weather Works
+## Separate Topic Publisher (`weather_split_publisher`)
 
-* Publish rate: **1 message per second (1 Hz)**
-* Each message simulates **15 minutes** of real world time
-* 96 messages = **24 hours**
-* Temperature follows a natural day–night sinusoid
-* Humidity inversely follows temperature
-* Wind speed peaks in the afternoon
-* Wind direction drifts smoothly
-* After 24 hours → **loop back to midnight**
+The `weather_split_publisher` node publishes the four weather variables as individual topics using `std_msgs/Float32`.
 
+| Topic Name        | Message Type       | Description               |
+| ----------------- | ------------------ | ------------------------- |
+| `/temperature`    | `std_msgs/Float32` | Temperature in °C         |
+| `/humidity`       | `std_msgs/Float32` | Relative humidity (%)     |
+| `/wind_speed`     | `std_msgs/Float32` | Wind speed in m/s         |
+| `/wind_direction` | `std_msgs/Float32` | Wind direction in degrees |
+
+### Running the Split Publisher
+
+### Terminal 1
+
+```bash
+source /opt/ros/humble/setup.bash
+cd ~/ros2_ws
+source install/setup.bash
+
+ros2 run weather_split_publisher weather_split_publisher
+```
+
+### Terminal 2 (view individual topics)
+
+```bash
+ros2 topic echo /temperature
+ros2 topic echo /humidity
+ros2 topic echo /wind_speed
+ros2 topic echo /wind_direction
+```
+
+---
+
+## Synthetic Weather Model
+
+* Publish rate: 1 Hz
+* Each published message corresponds to 15 minutes of simulated time
+* A full cycle consists of 96 messages (24 hours)
+* Temperature follows a sinusoidal day–night cycle
+* Humidity varies inversely with temperature
+* Wind speed tends to increase during the afternoon
+* Wind direction drifts gradually with added noise
+* After 24 hours, the data repeats from the beginning
 
 
 <!-- ---
