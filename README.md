@@ -1,127 +1,92 @@
-# Fake Weather Broadcaster – ROS 2 Humble
+# **Fake Weather Broadcaster – ROS 2 Humble**
 
-This ROS 2 package publishes synthetic 24-hour weather data using a custom message type.
-The publisher operates at **1 Hz**, and each message represents **15 minutes** of simulated time.
-A complete cycle consists of **96 samples** (96 × 15 minutes = 24 hours), after which the pattern repeats.
+This ROS 2 package publishes synthetic, time-varying weather data on **four separate ROS topics**.
+The publisher runs at **1 Hz**, and each message represents **15 minutes** of simulated time.
+A full cycle consists of **96 samples** (96 × 15 min = 24 hours) before repeating.
 
-The package includes:
+This repository contains a single ROS 2 Python package:
 
-* `weather_interfaces` — custom `.msg` definition
-* `weather_publisher` — publisher that outputs all weather fields on a single topic (`/weather`)
-* `weather_data_publisher` — publisher that outputs the four weather variables on separate topics
+* **`weather_data_publisher`** – publishes temperature, humidity, wind speed, and wind direction as **individual topics**.
 
-This package is compatible with standard ROS 2 Humble installations (Ubuntu 22.04 recommended).
+This package works on standard ROS 2 Humble installations (Ubuntu 22.04 recommended).
+(Mac users can also run it with a compatible ROS 2 environment.)
 
 ---
 
-## Setup Instructions (ROS 2 Humble, Standard Installation)
+# **Setup Instructions**
 
-### 1. Create a workspace
+## 1. Create a workspace
 
 ```bash
 mkdir -p ~/ros2_ws/src
 cd ~/ros2_ws/src
 ```
 
-### 2. Clone this repository
+## 2. Clone this repository
 
 ```bash
 git clone <your-repo-url>
 ```
 
-Your workspace structure should resemble:
+Your workspace should look like:
 
 ```
 ros2_ws/
   src/
     FAKE_DATA_BROADCASTER/
-      weather_interfaces/
-      weather_publisher/
       weather_data_publisher/
+      package.xml
+      setup.py
+      setup.cfg
+      resource/
 ```
 
-### 3. Build the workspace
+## 3. Build the workspace
 
 ```bash
 source /opt/ros/humble/setup.bash
 cd ~/ros2_ws
-colcon build
+colcon build --symlink-install
 source install/setup.bash
 ```
 
 ---
 
-## Running the Combined Weather Publisher (`/weather`)
+# **Running the Weather Data Publisher**
 
-### Terminal 1
+The `weather_data_publisher` node publishes the following topics:
+
+| Topic             | Type               | Description              |
+| ----------------- | ------------------ | ------------------------ |
+| `/temperature`    | `std_msgs/Float32` | Temperature (°C)         |
+| `/humidity`       | `std_msgs/Float32` | Relative humidity (%)    |
+| `/wind_speed`     | `std_msgs/Float32` | Wind speed (m/s)         |
+| `/wind_direction` | `std_msgs/Float32` | Wind direction (degrees) |
+
+### Terminal 1 — Run the node
+
+Your executable name is:
+
+```
+weather_data_publisher_node
+```
+
+Run it with:
 
 ```bash
-source /opt/ros/humble/setup.bash
-cd ~/ros2_ws
-source install/setup.bash
-
-ros2 run weather_publisher weather_publisher
-```
-
-Example log output:
-
-```
-[t= 2.5 h] T=18.7 °C, H=68.3 %, Wind=1.2 m/s @ 93°
+source ~/ros2_ws/install/setup.bash
+ros2 run weather_data_publisher weather_data_publisher_node
 ```
 
 ---
 
-## Viewing Combined Weather Data
+# **Viewing Weather Data**
 
-### Terminal 2
-
-```bash
-source /opt/ros/humble/setup.bash
-cd ~/ros2_ws
-source install/setup.bash
-
-ros2 topic list
-ros2 topic echo /weather
-```
-
-Example message:
-
-```text
-temperature_c: 21.4
-humidity_percent: 47.2
-wind_speed_mps: 3.1
-wind_direction_deg: 182.0
----
-```
-
----
-
-## Separate Topic Publisher (`weather_data_publisher`)
-
-The `weather_data_publisher` node publishes the four weather variables as individual topics using `std_msgs/Float32`.
-
-| Topic Name        | Message Type       | Description               |
-| ----------------- | ------------------ | ------------------------- |
-| `/temperature`    | `std_msgs/Float32` | Temperature in °C         |
-| `/humidity`       | `std_msgs/Float32` | Relative humidity (%)     |
-| `/wind_speed`     | `std_msgs/Float32` | Wind speed in m/s         |
-| `/wind_direction` | `std_msgs/Float32` | Wind direction in degrees |
-
-### Running the data Publisher
-
-### Terminal 1
+### Terminal 2 — Echo individual topics
 
 ```bash
-source /opt/ros/humble/setup.bash
-cd ~/ros2_ws
-source install/setup.bash
+source ~/ros2_ws/install/setup.bash
 
-ros2 run weather_data_publisher weather_data_publisher
-```
-
-### Terminal 2 (view individual topics)
-
-```bash
 ros2 topic echo /temperature
 ros2 topic echo /humidity
 ros2 topic echo /wind_speed
@@ -130,16 +95,18 @@ ros2 topic echo /wind_direction
 
 ---
 
-## Synthetic Weather Model
+# **Synthetic Weather Model**
 
-* Publish rate: 1 Hz
-* Each published message corresponds to 15 minutes of simulated time
-* A full cycle consists of 96 messages (24 hours)
-* Temperature follows a sinusoidal day–night cycle
+The data generator simulates a smooth 24-hour weather cycle:
+
+* Publish rate: **1 Hz**
+* Each sample = **15 minutes** simulated time
+* **96 samples = 24-hour cycle**
+* Temperature follows a sinusoidal day/night pattern
 * Humidity varies inversely with temperature
-* Wind speed tends to increase during the afternoon
-* Wind direction drifts gradually with added noise
-* After 24 hours, the data repeats from the beginning
+* Wind speed tends to peak midday
+* Wind direction drifts slowly with noise
+* After *one full cycle*, the pattern repeats
 
 
 <!-- ---
