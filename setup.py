@@ -1,6 +1,6 @@
 from setuptools import setup
 
-package_name = 'weather_publisher'
+package_name = 'weather_data_publisher'
 
 setup(
     name=package_name,
@@ -20,7 +20,7 @@ setup(
     tests_require=['pytest'],
     entry_points={
         'console_scripts': [
-            'weather_publisher = weather_publisher.weather_publisher_node:main',
+            'weather_data_publisher_node = weather_data_publisher.weather_data_publisher:main',
         ],
     },
 )

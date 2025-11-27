@@ -8,7 +8,7 @@ The package includes:
 
 * `weather_interfaces` — custom `.msg` definition
 * `weather_publisher` — publisher that outputs all weather fields on a single topic (`/weather`)
-* `weather_split_publisher` — publisher that outputs the four weather variables on separate topics
+* `weather_data_publisher` — publisher that outputs the four weather variables on separate topics
 
 This package is compatible with standard ROS 2 Humble installations (Ubuntu 22.04 recommended).
 
@@ -37,7 +37,7 @@ ros2_ws/
     FAKE_DATA_BROADCASTER/
       weather_interfaces/
       weather_publisher/
-      weather_split_publisher/
+      weather_data_publisher/
 ```
 
 ### 3. Build the workspace
@@ -96,9 +96,9 @@ wind_direction_deg: 182.0
 
 ---
 
-## Separate Topic Publisher (`weather_split_publisher`)
+## Separate Topic Publisher (`weather_data_publisher`)
 
-The `weather_split_publisher` node publishes the four weather variables as individual topics using `std_msgs/Float32`.
+The `weather_data_publisher` node publishes the four weather variables as individual topics using `std_msgs/Float32`.
 
 | Topic Name        | Message Type       | Description               |
 | ----------------- | ------------------ | ------------------------- |
@@ -107,7 +107,7 @@ The `weather_split_publisher` node publishes the four weather variables as indiv
 | `/wind_speed`     | `std_msgs/Float32` | Wind speed in m/s         |
 | `/wind_direction` | `std_msgs/Float32` | Wind direction in degrees |
 
-### Running the Split Publisher
+### Running the data Publisher
 
 ### Terminal 1
 
@@ -116,7 +116,7 @@ source /opt/ros/humble/setup.bash
 cd ~/ros2_ws
 source install/setup.bash
 
-ros2 run weather_split_publisher weather_split_publisher
+ros2 run weather_data_publisher weather_data_publisher
 ```
 
 ### Terminal 2 (view individual topics)

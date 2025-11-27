@@ -6,9 +6,9 @@ from rclpy.node import Node
 from std_msgs.msg import Float32
 
 
-class WeatherSplitPublisher(Node):
+class WeatherDataPublisher(Node):
     def __init__(self):
-        super().__init__('weather_split_publisher')
+        super().__init__('weather_data_publisher')
 
         # === 4 Publishers (separate topics) ===
         self.pub_temp = self.create_publisher(Float32, 'temperature', 10)
@@ -23,7 +23,7 @@ class WeatherSplitPublisher(Node):
         self.num_slots = 96
         self.slot_idx = 0
 
-        self.get_logger().info("WeatherSplitPublisher started.")
+        self.get_logger().info("WeatherDataPublisher started.")
 
     def timer_callback(self):
         t_norm = self.slot_idx / float(self.num_slots)
@@ -57,7 +57,7 @@ class WeatherSplitPublisher(Node):
 
 def main(args=None):
     rclpy.init(args=args)
-    node = WeatherSplitPublisher()
+    node = WeatherDataPublisher()
     rclpy.spin(node)
     node.destroy_node()
     rclpy.shutdown()
