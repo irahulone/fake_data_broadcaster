@@ -48,9 +48,9 @@ class WeatherDataPublisher(Node):
         self.pub_wind_speed.publish(Float32(data=float(wind_speed)))
         self.pub_wind_direction.publish(Float32(data=float(wind_direction)))
 
-        self.get_logger().info(
-            f"temp={temp:.1f}, humidity={humidity:.1f}, wind={wind_speed:.1f}, dir={wind_direction:.0f}"
-        )
+        #self.get_logger().info(
+        #    f"temp={temp:.1f}, humidity={humidity:.1f}, wind={wind_speed:.1f}, dir={wind_direction:.0f}"
+        #)
 
         self.slot_idx = (self.slot_idx + 1) % self.num_slots
 
