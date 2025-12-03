@@ -28,7 +28,7 @@ cd ~/ros2_ws/src
 git clone <your-repo-url>
 ```
 
-Your workspace should look like:
+Your workspace should look like(you may have more packages in parallel):
 
 ```
 ros2_ws/
