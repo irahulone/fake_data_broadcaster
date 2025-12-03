@@ -93,8 +93,100 @@ ros2 topic echo /wind_speed
 ros2 topic echo /wind_direction
 ```
 
+
 ---
 
+# Recording Weather Data to a ROS 2 Bag
+
+You can record any weather topic into a rosbag for later analysis.
+
+### Record a single topic
+
+Example: record only `/wind_speed`:
+
+```bash
+ros2 bag record /wind_speed -o wind_speed_bag --storage sqlite3
+```
+
+You can also let ROS stop automatically after a fixed duration:
+
+```bash
+ros2 bag record /wind_speed -o wind_speed_bag --storage sqlite3 --max-bag-duration 10
+```
+
+This produces a folder:
+
+```
+wind_speed_bag/
+  metadata.yaml
+  wind_speed_bag_0.db3
+```
+
+Using `--max-bag-duration` helps avoid corrupted bags caused by force-terminating the recorder.
+
+---
+
+# Converting a ROS 2 Bag to CSV (`bag_to_csv.py`)
+
+This repository includes a helper script:
+
+```
+FAKE_DATA_BROADCASTER/utils/bag_to_csv.py
+```
+
+This script:
+
+* Reads a rosbag2 folder (`sqlite3` or `mcap`)
+* Automatically detects the storage backend from `metadata.yaml`
+* Deserializes ROS 2 messages using the official Python API
+* Exports a CSV containing timestamps and message data
+
+### File Structure Example
+
+```
+ros2_ws/
+  wind_speed_bag/
+    metadata.yaml
+    wind_speed_bag_0.db3
+  src/
+    FAKE_DATA_BROADCASTER/
+      utils/
+        bag_to_csv.py
+```
+
+### Using the script
+
+Edit the following variables at the top of `bag_to_csv.py`:
+
+```python
+BAG_DIR = "/path/to/wind_speed_bag"
+OUT_CSV = "/path/to/wind_speed.csv"
+TARGET_TOPIC = "/wind_speed"
+```
+
+Run the script from the workspace:
+
+```bash
+cd ~/ros2_ws
+python3 src/FAKE_DATA_BROADCASTER/utils/bag_to_csv.py
+```
+
+The output CSV will be created at the location you specified in `OUT_CSV`.
+
+### CSV Output Format
+
+For `std_msgs/Float32` or `Float64` weather fields, the CSV looks like:
+
+```
+time_sec,data
+1738739412.1234,2.31
+1738739413.1234,2.45
+...
+```
+
+This file can be opened in Excel, Google Sheets, MATLAB, pandas, or other analysis tools.
+
+---
 # **Synthetic Weather Model**
 
 The data generator simulates a smooth 24-hour weather cycle:
@@ -181,3 +273,4 @@ ros2 topic echo /weather
 * Wind direction drifts gently
 * After 96 samples → loops back to midnight
  -->
+

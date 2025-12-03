@@ -7,12 +7,19 @@ import yaml
 import rosbag2_py
 from rosidl_runtime_py.utilities import get_message
 from rclpy.serialization import deserialize_message
+import os
 
-# ---------- CONFIG ----------
-BAG_DIR = "/Users/kangwang/ros2_ws/wind_speed_bag"
-OUT_CSV = "/Users/kangwang/ros2_ws/src/fake_data_broadcaster/wind_speed.csv"
-TARGET_TOPIC = "/wind_speed"   # change if your topic name is different
-# -----------------------------
+
+BAG_DIR = "wind_speed_bag"       # Folder containing metadata.yaml
+OUT_CSV = "src/fake_data_broadcaster/wind_speed.csv"       # Output CSV file name
+TOPIC = "/wind_speed"            # Topic to export
+# Compute workspace root (directory where script is located → up 3 levels)
+THIS_DIR = os.path.dirname(os.path.abspath(__file__))
+WS_ROOT = os.path.abspath(os.path.join(THIS_DIR, "../../.."))
+
+BAG_DIR = os.path.join(WS_ROOT, BAG_DIR)
+OUT_CSV = os.path.join(WS_ROOT, OUT_CSV)
+TARGET_TOPIC = TOPIC
 
 # 1) Read metadata.yaml to get storage_id
 metadata_path = os.path.join(BAG_DIR, "metadata.yaml")
