@@ -9,10 +9,12 @@ from rosidl_runtime_py.utilities import get_message
 from rclpy.serialization import deserialize_message
 import os
 
+cur_dir = os.getcwd()
 
-BAG_DIR = "wind_speed_bag"       # Folder containing metadata.yaml
-OUT_CSV = "src/fake_data_broadcaster/wind_speed.csv"       # Output CSV file name
-TOPIC = "/wind_speed"            # Topic to export
+
+BAG_DIR = cur_dir                           # Folder containing metadata.yaml
+OUT_CSV = cur_dir + "wind_speed.csv"        # Output CSV file name
+TOPIC = "/wind_speed"                       # Topic to export
 # Compute workspace root (directory where script is located → up 3 levels)
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 WS_ROOT = os.path.abspath(os.path.join(THIS_DIR, "../../.."))
