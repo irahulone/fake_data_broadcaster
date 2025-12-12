@@ -13,7 +13,7 @@ cur_dir = os.getcwd()
 
 
 BAG_DIR = cur_dir                           # Folder containing metadata.yaml
-OUT_CSV = cur_dir + "wind_speed.csv"        # Output CSV file name
+OUT_CSV = cur_dir + "/wind_speed.csv"        # Output CSV file name
 TOPIC = "/wind_speed"                       # Topic to export
 # Compute workspace root (directory where script is located → up 3 levels)
 THIS_DIR = os.path.dirname(os.path.abspath(__file__))
